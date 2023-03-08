@@ -1,4 +1,4 @@
-import "./css/products.css";
+import "../styles/Products.css";
 import { AddToCartIcon } from "./Icons";
 
 export function Products({ products }) {
@@ -6,8 +6,8 @@ export function Products({ products }) {
     <main className="products">
       <ul>
         {products.map((product) => (
-          <li key={prodct.id}>
-            <img src={product.thumb} alt={product.title} />
+          <li key={product.id}>
+            <img src={product.thumbnail} alt={product.title} />
             <div>
               <span>{product.title}</span>
             </div>
