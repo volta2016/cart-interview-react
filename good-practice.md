@@ -51,3 +51,164 @@ const [filters, setFilters] = useState({ category: "lapto", minPrice: 0 });
 ```
 
 ## Vamos a crear el filtro del price con un rango
+
+Si utlizas el un rango siempre tienes que mostrar de cuanto es el rango, para eso vas utilzar un estado que te va permitir saber donde esta y mostrarlo en el render
+
+```jsx
+import { useState } from "react";
+import "../styles/Filters.css";
+
+export default function Filters() {
+  const [minPrice, setMinPrice] = useState(0);
+
+  const handleChangeMinPrice = (event) => {
+    setMinPrice(event.target.value);
+  };
+
+  return (
+    <section className="filters">
+      <div>
+        <label htmlFor="price">Price from:</label>
+        <input
+          type="range"
+          id="price"
+          min="0"
+          max="1000"
+          onChange={handleChangeMinPrice}
+        />
+        <span>${minPrice}</span>
+      </div>
+
+      <div>
+        <label htmlFor="category">Category</label>
+        <select id="category">
+          <option value="all">all</option>
+          <option value="laptops">Laptops</option>
+          <option value="smartphone">Celphones</option>
+        </select>
+      </div>
+    </section>
+  );
+}
+```
+
+siempre coloca el valor después despues del input para no tener brincos saltos en la UI.
+
+Que tenemos que hacer para que esto funcione, nos vamos al app y el setFilters se lo tenemos que pasar al header
+
+![error-fetch](./screen/flow-state.png)
+
+El Filters es el que quiere leer realmente el estado de los filtros, no solo leerlo si no también actualizarlo.
+
+- Por eso tenemos que pasar el setFilters de la App y del Header al Filters.
+
+## Esto se le conoce en react como prop driling
+
+Es como si con un taladro estas pasando hacia abajo unas props para que pueda funcionar algo.
+
+No ocupes useMemo y useCallback por defecto siempre tienes que ver si hay problemas de rendimiento y con la cantidad de data que estas trabajando, analisar si el calculo es costoso o no. El coste que tiene useMemo puede ser mayor que los beneficios que nos da.
+
+```jsx
+import { useState } from "react";
+import "../styles/Filters.css";
+
+export default function Filters({ onChange }) {
+  const [minPrice, setMinPrice] = useState(0);
+
+  const handleChangeMinPrice = (event) => {
+    setMinPrice(event.target.value);
+    //algo esta mal
+    //hay 2 fuentes de la verdad
+    onChange((prevState) => ({
+      ...prevState,
+      minPrice: event.taget.value,
+    }));
+  };
+
+  const handleChangeCategory = (event) => {
+    //esto esta mal
+    onChange((prevState) => ({
+      ...prevState,
+      category: event.target.value,
+    }));
+  };
+
+  return (
+    <section className="filters">
+      <div>
+        <label htmlFor="price">Price</label>
+        <input
+          type="range"
+          id="price"
+          min="0"
+          max="1000"
+          onChange={handleChangeMinPrice}
+        />
+        <span>${minPrice}</span>
+      </div>
+
+      <div>
+        <label htmlFor="category">Category</label>
+        <select id="category" onChange={handleChangeCategory}>
+          <option value="all">all</option>
+          <option value="laptops">Laptops</option>
+          <option value="smartphone">Celphones</option>
+        </select>
+      </div>
+    </section>
+  );
+}
+```
+
+vemos que onChange es la props de setFilters que pasamos desde App, este es un error muy común icluso de seniors en react.
+
+## Qué es lo mas difícil de usar react?
+
+Es saber usar bien react
+
+```jsx
+import { useState } from "react";
+import "../styles/Filters.css";
+
+export default function Filters({ onChange }) {
+  const [minPrice, setMinPrice] = useState(0);
+
+  const handleChangeMinPrice = (event) => {
+    setMinPrice(event.target.value);
+    //algo esta mal
+    //estamos pasando la función de actualizar estado
+    //nativa de react a un componente hijo
+    onChange((prevState) => ({
+      ...prevState,
+      minPrice: event.taget.value,
+    }));
+  };
+
+  return (
+    <section className="filters">
+      <div>
+        <label htmlFor="price">Price</label>
+        <input
+          type="range"
+          id="price"
+          min="0"
+          max="1000"
+          onChange={handleChangeMinPrice}
+        />
+        <span>${minPrice}</span>
+      </div>
+
+      <div>
+        <label htmlFor="category">Category</label>
+        <select id="category">
+          <option value="all">all</option>
+          <option value="laptops">Laptops</option>
+          <option value="smartphone">Celphones</option>
+        </select>
+      </div>
+    </section>
+  );
+}
+```
+
+aquí lo que tienes que saber es que el contrato que espera este onChange, es el del state. Esta cosas son las que vas querer evitar para crear una pequeña abstracción, entre el componente padre y el componente hijo

@@ -1,12 +1,12 @@
 import React from "react";
 import Filters from "./Filters";
 
-const Header = () => {
+const Header = ({ chageFilters }) => {
   return (
     <header>
       <h1>Shopping Cart 🛒</h1>
 
-      <Filters />
+      <Filters onChange={chageFilters} />
     </header>
   );
 };
