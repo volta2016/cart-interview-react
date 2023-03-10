@@ -353,7 +353,7 @@ cualquier cosa, numero letra, etc...
 Este orden siempre va ser el mismo, tanto en el servidor como en el cliente, como index esto
 no sirve
 
-una cosa cuando usas map el identificador unico es para ese elemento, en el filter es distinto
+una cosa cuando usas map el identificador único es para ese elemento, en el filter es distinto
 orden de llamada para ese elemento.
 
 useId tenerlo en cuenta para renderizado con filtros.
@@ -412,4 +412,131 @@ export function useFilter() {
 }
 ```
 
-como funciona el hook por dentro ya no importa tanto, lo unico que nos intereza es que nos traiga una forma de filtrar los productos en base a los filtros y una forma de actualizar los filtros
+como funciona el hook por dentro ya no importa tanto, lo único que nos interesa es que nos traiga una forma de filtrar los productos a base de los filtros y una forma de actualizar los filtros.
+
+Vemos que la forma de pasar el stado y props es muy desordenada sería mejor pasar esto dentro de los componentes donde solo la necesitamos.
+
+Para solucionar esto vamos a crear el contexto, aquellos componentes que quieran el estado.
+
+El estado y el cálculo lo vamos a tener el contexto el de filters. Vamos a desacoplar toda la lógica y la va leer el componente que la necesite.
+
+![context](./screen/context.png)
+
+**El contexto** está totalmente separado de nuestro árbol de componentes y puede leer de forma separada, pero como consigues realmente leer de aquí.
+
+Para eso tenemos que envolver toda nuestra App con un filter provider, porque si no por defecto no tiene acceso.
+
+Debemos seguir 3 pasos:
+
+- Crear el contexto
+- Proveer el contexto
+- Consumir el contexto
+
+## Provider
+
+![provider](./screen/provider.png)
+
+```jsx
+export const FiltersContext = createContext();
+
+//2.provide the context to provide the context
+
+export function FiltersProviders({ children }) {
+  return (
+    <FiltersContext.Provider
+      value={{
+        category: "all",
+        minPrice: 0,
+      }}
+    >
+      {/* 3. define the value of initial state */}
+      {children}
+    </FiltersContext.Provider>
+  );
+}
+```
+
+Por ahora iniciamos con este value, necesitamos sacar diferente información para componente específico.
+
+![provider-value](./screen/provider-value.png)
+
+Necesitamos envolver toda nuestra App para que funcione.
+Ya lo hemos creado y proveído el contexto. Pero nos falta consumirlo.
+
+## vamos a consumirlo
+
+Aquí le estamos pasando el contexto que tenemos que consumir
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { FiltersProviders } from "./context/filter";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <FiltersProviders>
+    <App />
+  </FiltersProviders>
+);
+```
+
+```jsx
+import { createContext } from "react";
+
+//1.Este es que tenemos que consumir
+export const FiltersContext = createContext();
+
+//2.Este es el que nos provee de acceso al contexto
+
+export function FiltersProviders({ children }) {
+  return (
+    <FiltersContext.Provider
+      value={{
+        category: "all",
+        minPrice: 0,
+      }}
+    >
+      {/* 3. define the value of initial state */}
+      {children}
+    </FiltersContext.Provider>
+  );
+}
+```
+
+Puedo existir un contexto que sea estático, pues tener un contexto para en theme, el contexto es una forma de inyección de dependencias, no es solo para hacer estados globales
+
+ya estamos consumiendo el contexto, el contexto que estamos consumiendo es estático.
+
+![provider-value](./screen/context-static.png)
+
+Vamos a crear un estado para que el contexto puedo controlar
+esto. Como el contexto esta fuera de ese componente vamos a tener un stado para ese solo contexto.
+
+```jsx
+import { createContext, useState } from "react";
+
+//1.create the context
+export const FiltersContext = createContext();
+
+//2.provide the context to provide the context
+
+export function FiltersProviders({ children }) {
+  const [filters, setFilters] = useState({
+    category: "all",
+    minPrice: 0,
+  });
+
+  return (
+    <FiltersContext.Provider value={{ filters, setFilters }}>
+      {/* 3. define the value of initial state */}
+      {children}
+    </FiltersContext.Provider>
+  );
+}
+```
+
+Ya no queremos solamente el valué sino el state y setFilters, con los pocos cambios que hemos hecho tenemos
+un estado global.
+
+Contex esta pensado para estado -> que cambien con poca
+Frecuencia o que sea muy pequeños

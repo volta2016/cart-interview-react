@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import { Footer } from "./components/Footer";
 import { useFilter } from "./hooks/useFilter";
 import { IS_DEVELOPMENT } from "./config";
+
 function App() {
   const [products] = useState(initialProducts);
   const { setFilters, filtersProducts, filters } = useFilter();
