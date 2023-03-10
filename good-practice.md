@@ -392,3 +392,24 @@ export default App;
 ```
 
 ## useContext ta va permitir tener un nuevo contexto en react
+
+Lo unico que hemos hecho es extrear la lógica del componente App sobre los filtro en un customHook
+
+```js
+export function useFilter() {
+  const [filters, setFilters] = useState({ category: "all", minPrice: 0 });
+
+  const filtersProducts = (product) => {
+    return products.filter((product) => {
+      return (
+        (product.price >= filters.minPrice && filters.category === "all") ||
+        product.category === filters.category
+      );
+    });
+  };
+
+  return { filtersProducts, setFilters };
+}
+```
+
+como funciona el hook por dentro ya no importa tanto, lo unico que nos intereza es que nos traiga una forma de filtrar los productos en base a los filtros y una forma de actualizar los filtros
