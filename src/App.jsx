@@ -5,7 +5,7 @@ import "./styles/index.css";
 import Header from "./components/Header";
 
 function App() {
-  const [products, setfirst] = useState(initialProducts);
+  const [products] = useState(initialProducts);
   const [filters, setFilters] = useState({ category: "all", minPrice: 0 });
 
   const filtersProducts = (product) => {

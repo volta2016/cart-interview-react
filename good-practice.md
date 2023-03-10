@@ -176,11 +176,19 @@ export default function Filters({ onChange }) {
   const handleChangeMinPrice = (event) => {
     setMinPrice(event.target.value);
     //algo esta mal
+
+    onChange((prevState) => ({
+      ...prevState,
+      minPrice: event.taget.value,
+    }));
+  };
+
+  const handleChangeCategory = (event) => {
     //estamos pasando la función de actualizar estado
     //nativa de react a un componente hijo
     onChange((prevState) => ({
       ...prevState,
-      minPrice: event.taget.value,
+      category: event.target.value,
     }));
   };
 
@@ -200,7 +208,7 @@ export default function Filters({ onChange }) {
 
       <div>
         <label htmlFor="category">Category</label>
-        <select id="category">
+        <select id="category" onChange={handleChangeCategory}>
           <option value="all">all</option>
           <option value="laptops">Laptops</option>
           <option value="smartphone">Celphones</option>
@@ -211,4 +219,176 @@ export default function Filters({ onChange }) {
 }
 ```
 
-aquí lo que tienes que saber es que el contrato que espera este onChange, es el del state. Esta cosas son las que vas querer evitar para crear una pequeña abstracción, entre el componente padre y el componente hijo
+aquí lo que tienes que saber es que el contrato que espera este onChange, es el del state. Esta cosas son las que vas querer evitar para crear una pequeña abstracción, entre el componente padre y el componente hijo, por que si no el contrato que tienes aquí es un estado de react
+
+```jsx
+onChange((prevState) => ({
+  ...prevState,
+  minPrice: event.taget.value,
+}));
+```
+
+y no debería que por que saberlo si al final lo que necesitamos es algo mas concreto.
+
+```jsx
+const handleChangeMinPrice = (event) => {
+  //algo esta mal
+  setMinPrice(event.target.value);
+  onChange((prevState) => ({
+    ...prevState,
+    minPrice: event.target.value,
+  }));
+};
+
+const handleChangeCategory = (event) => {
+  //estamos pasando la función de actualizar estado
+  //nativa de react a un componente hijo
+  onChange((prevState) => ({
+    ...prevState,
+    category: event.target.value,
+  }));
+};
+```
+
+El error es que, luego ese contrato lo tienes que cambiar en muchos sitios.
+
+## useReducer que es una forma distinta a useState para manejar el estado
+
+## useId
+
+para no cometer errores con la id de tenerla en cualquier sitio de forma manual.
+
+```jsx
+<section className="filters">
+  <div>
+    <label htmlFor="price">Price</label>
+    <input
+      type="range"
+      id="price"
+      min="0"
+      max="1000"
+      onChange={handleChangeMinPrice}
+    />
+    <span>${minPrice}</span>
+  </div>
+
+  <div>
+    <label htmlFor="category">Category</label>
+    <select id="category" onChange={handleChangeCategory}>
+      <option value="all">all</option>
+      <option value="laptops">Laptops</option>
+      <option value="smartphone">Celphones</option>
+    </select>
+  </div>
+</section>
+```
+
+Como vemos en estos input es muy facíl que te equivoques, qués es lo que tienes que utlizar
+en lugar de usar la id manualmente, react tiene un HOOK que se llama **useId** justamente lo
+que te genera es un identificador unico, siempre va a ser el mismo y ademas funciona con server side rendering,
+En nuestro caso no estamos usando Next js, pero igual podemos aplicar al mismo caso.
+
+## ¿ Por qué ? esto funciona
+
+```jsx
+import { useId, useState } from "react";
+import "../styles/Filters.css";
+
+export default function Filters({ onChange }) {
+  const [minPrice, setMinPrice] = useState(0);
+  const minPriceFilteredId = useId();
+  const categoryFilterId = useId();
+
+  const handleChangeMinPrice = (event) => {
+    //algo esta mal
+    setMinPrice(event.target.value);
+    onChange((prevState) => ({
+      ...prevState,
+      minPrice: event.target.value,
+    }));
+  };
+
+  const handleChangeCategory = (event) => {
+    //estamos pasando la función de actualizar estado
+    //nativa de react a un componente hijo
+    onChange((prevState) => ({
+      ...prevState,
+      category: event.target.value,
+    }));
+  };
+
+  return (
+    <section className="filters">
+      <div>
+        <label htmlFor={minPriceFilteredId}>Price</label>
+        <input
+          type="range"
+          id={minPriceFilteredId}
+          min="0"
+          max="1000"
+          onChange={handleChangeMinPrice}
+        />
+        <span>${minPrice}</span>
+      </div>
+
+      <div>
+        <label htmlFor={categoryFilterId}>Category</label>
+        <select id={categoryFilterId} onChange={handleChangeCategory}>
+          <option value="all">all</option>
+          <option value="laptops">Laptops</option>
+          <option value="smartphones">Celphones</option>
+        </select>
+      </div>
+    </section>
+  );
+}
+```
+
+Lo que esta diciendo react es voy ponerle un identificador al componente que puede ser
+cualquier cosa, numero letra, etc...
+![tree](./screen/tree.png)
+
+![useId](./screen/useId.png)
+
+Este orden siempre va ser el mismo, tanto en el servidor como en el cliente, como index esto
+no sirve
+
+una cosa cuando usas map el identificador unico es para ese elemento, en el filter es distinto
+orden de llamada para ese elemento.
+
+useId tenerlo en cuenta para renderizado con filtros.
+
+Tiene sentido todo esto, si esto es un estado se vuelve a generar el estado, entonces se vuelve a renderizar el componente y renderizarse el componente se vuelve ejecutar esta linea de aqui
+
+```jsx
+const filteredProducts = filtersProducts(products);
+```
+
+```jsx
+function App() {
+  const [products] = useState(initialProducts);
+  const [filters, setFilters] = useState({ category: "all", minPrice: 0 });
+
+  const filtersProducts = (product) => {
+    return products.filter((product) => {
+      return (
+        (product.price >= filters.minPrice && filters.category === "all") ||
+        product.category === filters.category
+      );
+    });
+  };
+
+  const filteredProducts = filtersProducts(products);
+
+  return (
+    <>
+      <Header changeFilters={setFilters} />
+      <Products products={filteredProducts} />
+    </>
+  );
+}
+
+export default App;
+```
+
+## useContext ta va permitir tener un nuevo contexto en react
