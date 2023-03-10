@@ -539,4 +539,85 @@ Ya no queremos solamente el valué sino el state y setFilters, con los pocos cam
 un estado global.
 
 Contex esta pensado para estado -> que cambien con poca
-Frecuencia o que sea muy pequeños
+Frecuencia o que sea muy pequeños.
+
+ahora vamos a evitar el prop driling
+
+```jsx
+import { useId, useState } from "react";
+import { useFilter } from "../hooks/useFilter";
+import "../styles/Filters.css";
+
+export default function Filters() {
+  const { setFilters } = useFilter(); //trear el state directamente de los filtros, primera fuente de la verdad
+  const [minPrice, setMinPrice] = useState(0); //segunda fuente de la verdad
+  const minPriceFilteredId = useId();
+  const categoryFilterId = useId();
+
+  console.log({
+    minPriceFilteredId,
+    categoryFilterId,
+  });
+
+  const handleChangeMinPrice = (event) => {
+    //algo esta mal
+    setMinPrice(event.target.value);
+    setFilters((prevState) => ({
+      ...prevState,
+      minPrice: event.target.value,
+    }));
+  };
+
+  const handleChangeCategory = (event) => {
+    //estamos pasando la función de actualizar estado
+    //nativa de react a un componente hijo
+    setFilters((prevState) => ({
+      ...prevState,
+      category: event.target.value,
+    }));
+  };
+
+  return (
+    <section className="filters">
+      <div>
+        <label htmlFor={minPriceFilteredId}>Price</label>
+        <input
+          type="range"
+          id={minPriceFilteredId}
+          min="0"
+          max="1000"
+          onChange={handleChangeMinPrice}
+        />
+        <span>${minPrice}</span>
+      </div>
+
+      <div>
+        <label htmlFor={categoryFilterId}>Category</label>
+        <select id={categoryFilterId} onChange={handleChangeCategory}>
+          <option value="all">all</option>
+          <option value="laptops">Laptops</option>
+          <option value="smartphones">Celphones</option>
+        </select>
+      </div>
+    </section>
+  );
+}
+```
+
+la Logica la tenemos separada de los propios filters
+
+## Error común en react
+
+2 fuentes de la verdad el price de la UI no es el mimos que tenemos en nuestro contexto por que esto es un estado local
+
+```jsx
+const [minPrice, setMinPrice] = useState(0); // esto es local
+```
+
+y tenemos el filtro del minPrice en el estado global, es como que tenemos el mismo estado repetido 2 veces. En react solo
+tienes que tener solo una fuente de la verdad. EL problema que al tener 2 fuentes de la verda no sabes por cual guiarte,
+Nuetra UI no es viable, entonces como evitamos este problema
+
+- nos vamos guiar de los filtros globales
+
+ahora si lo tenemos totalmente sincronizado, solamente una fuente de la verdad

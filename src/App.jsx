@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-      <Header changeFilters={setFilters} />
+      <Header />
       <Products products={filteredProducts} />
       {IS_DEVELOPMENT && <Footer filters={filters} />}
     </>
