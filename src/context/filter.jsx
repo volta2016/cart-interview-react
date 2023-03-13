@@ -18,3 +18,5 @@ export function FiltersProviders({ children }) {
     </FiltersContext.Provider>
   );
 }
+
+//Sigleton Modulo de JavaScript

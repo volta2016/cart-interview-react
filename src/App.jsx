@@ -6,17 +6,18 @@ import Header from "./components/Header";
 import { Footer } from "./components/Footer";
 import { useFilter } from "./hooks/useFilter";
 import { IS_DEVELOPMENT } from "./config";
+import { Cart } from "./components/Cart";
 
 function App() {
-  const [products] = useState(initialProducts);
   const { setFilters, filtersProducts, filters } = useFilter();
-  const filteredProducts = filtersProducts(products);
+  const filteredProducts = filtersProducts(initialProducts);
 
   return (
     <>
       <Header />
+      <Cart />
       <Products products={filteredProducts} />
-      {IS_DEVELOPMENT && <Footer filters={filters} />}
+      {IS_DEVELOPMENT && <Footer />}
     </>
   );
 }

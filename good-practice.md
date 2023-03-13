@@ -516,7 +516,7 @@ esto. Como el contexto esta fuera de ese componente vamos a tener un stado para 
 import { createContext, useState } from "react";
 
 //1.create the context
-export const FiltersContext = createContext();
+export const FiltersContext = createContext(); //solo se crea una vez
 
 //2.provide the context to provide the context
 
@@ -621,3 +621,61 @@ Nuetra UI no es viable, entonces como evitamos este problema
 - nos vamos guiar de los filtros globales
 
 ahora si lo tenemos totalmente sincronizado, solamente una fuente de la verdad
+
+## Vamos a crear el contexto del Carro de compra
+
+El carrito es importante que sea un estado global por que aparecera fijo en la parte superior, pero tambien los botones tendran que cambiar y actualizar el aside con el detalle del producto agregado al carrito.
+
+## Cómo añadimos un producto al carrito de manera sencilla
+
+```jsx
+const addToCart = (product) => {
+  setCart([...cart, product]);
+};
+```
+
+lo que podemos hacer es checkar si el producto ya se encuentra en el carrito.
+
+```jsx
+const productInCartIndex = cart.findIndex((item) => item.id === product.id);
+```
+
+Lo que podemos hacer en el caso que ya este.
+
+Vamos a buscar en el carrito el index de ese item donde el item.id sea igual al producto que estamos intentando añadir.
+
+vamos utlizar el structoreClone(cart) hace copia profunda de los arrays y de los objetos
+
+por lo tanto aquí tienes un carrito nuevo
+
+```jsx
+//this is a form one way
+if (productInCartIndex >= 0) {
+  const newCart = structuredClone(cart);
+  newCart[productInCartIndex].quantity += 1;
+  return setCart(newCart);
+}
+```
+
+**Ya sabes que en el estado no puedes mutar el estado**
+
+lo que puedes hacer justamente es recuperar el index que tenemos de productInCartIndex e incrementar la cantidad, que este no es parte del state, la copia la estamos modificando.
+Este es un forma.
+
+¿por qué no usar spread operator? por que no es una copia profunda es una copia superficial.
+
+como el prodcuto no esta en el carrito lo inicializamos con la cantidad de 1
+
+```jsx
+setCart((prevState) => [
+  ...prevState,
+  {
+    ...product,
+    quantity: 1,
+  },
+]);
+```
+
+ahora que tenemos el contexto tenemos que crear un hook para poder leer el contexto, vamos a crear un useCart que va a ser un custom hook.
+
+Una cosa que se pueden hacer el los custom hook que consumen un contexto y buena práctica, es el hecho de que context es undefined
