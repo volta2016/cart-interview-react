@@ -734,3 +734,41 @@ setCart(cart.filter((item) => item.id !== product.id));
 ```
 
 esto aveces puede tener un array condition y accede exactamente al ultimo valor que puede tener el state, es mejor y buena práctica hacerlo con la función, **la función recibe como primer parametro justamente el valor anterior del estado y partir de ese valor duevlves el nuevo valor que tiene que tener ese estado**
+
+vamos a componente Cart
+
+```jsx
+function CartItem({ thumnail, price, title, quantity, addToCart }) {
+  return (
+    <li>
+      <img src={thumnail} alt={title} />
+      <div>
+        <strong>{title}</strong> - ${price}
+      </div>
+      <footer>
+        <small onClick={addToCart}>Qty: {quantity}</small>
+        <button>*</button>
+      </footer>
+    </li>
+  );
+}
+```
+
+addToCart quiero que añada ese producto entonces se lo paso como una función que se va ejecutar cada vez que le den click, lo que estamos ahciend es crear una función que se la pasamos como props para añadir específicamente ese producto, no hace falta que el addToCart como global sin necesidad de del parámetro producto pase tambien a CartItem, quien añade
+al carrito es el padre.
+
+```jsx
+<button onClick={clearCart}>
+  <ClearCartIcon />
+</button>
+```
+
+aquí le estamos pasando la referencia de la función no la ejecución y ademas no recibe ningún paramentro, también puede ser una mala práctica si tiene un paramentro opcional, estas realmente contralando lo que se ejecuta en la función
+
+```jsx
+<button onClick={() => clearCart()}>
+  <ClearCartIcon />
+</button>
+```
+
+si lo entiendes así todo esta bien, no pasa nada. Las funciones son de primera clase eso quiere decir que la puedes pasar como parametro

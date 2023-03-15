@@ -3,15 +3,15 @@ import { useFilter } from "../hooks/useFilter";
 import "../styles/Filters.css";
 
 export default function Filters() {
-  const { filters, setFilters } = useFilter(); //trear el state directamente de los filtros
+  const { filters, setFilters } = useFilter(); //bring the state directly from the filters
 
   const minPriceFilteredId = useId();
   const categoryFilterId = useId();
 
-  console.log({
-    minPriceFilteredId,
-    categoryFilterId,
-  });
+  // console.log({
+  //   minPriceFilteredId,
+  //   categoryFilterId,
+  // });
 
   const handleChangeMinPrice = (event) => {
     setFilters((prevState) => ({
@@ -21,8 +21,8 @@ export default function Filters() {
   };
 
   const handleChangeCategory = (event) => {
-    //estamos pasando la función de actualizar estado
-    //nativa de react a un componente hijo
+    //we are passing the status update function
+    //native of react to a child component
     setFilters((prevState) => ({
       ...prevState,
       category: event.target.value,
