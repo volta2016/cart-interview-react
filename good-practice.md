@@ -679,3 +679,58 @@ setCart((prevState) => [
 ahora que tenemos el contexto tenemos que crear un hook para poder leer el contexto, vamos a crear un useCart que va a ser un custom hook.
 
 Una cosa que se pueden hacer el los custom hook que consumen un contexto y buena práctica, es el hecho de que context es undefined
+
+## Por qué ocupamos prevState
+
+```jsx
+import { createContext, useState } from "react";
+
+export const CartContext = createContext();
+
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
+
+  const addToCart = (product) => {
+    //check if the product is already in the cart
+    const productInCartIndex = cart.findIndex((item) => item.id === product.id);
+
+    if (productInCartIndex >= 0) {
+      const newCart = structuredClone(cart);
+      newCart[productInCartIndex].quantity += 1;
+      return setCart(newCart);
+    }
+
+    //the product is not in the cart
+    setCart((prevState) => [
+      ...prevState,
+      {
+        ...product,
+        quantity: 1,
+      },
+    ]);
+  };
+
+  const removeFromCart = (product) => {
+    setCart(cart.filter((item) => item.id !== product.id));
+    setCart((prevState) => prevState.filter((item) => item.id !== product.id));
+  };
+  const clearCart = () => {
+    setCart([]);
+  };
+  return (
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+```
+
+cuando tenemos la actualización del estado:
+
+```jsx
+setCart(cart.filter((item) => item.id !== product.id));
+```
+
+esto aveces puede tener un array condition y accede exactamente al ultimo valor que puede tener el state, es mejor y buena práctica hacerlo con la función, **la función recibe como primer parametro justamente el valor anterior del estado y partir de ese valor duevlves el nuevo valor que tiene que tener ese estado**

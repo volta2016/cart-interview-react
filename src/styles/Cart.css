@@ -6,6 +6,7 @@
   right: 0px;
   top: 0px;
   width: 200px;
+  z-index: 1;
 }
 
 .cart img {
