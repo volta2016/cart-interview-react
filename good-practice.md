@@ -771,4 +771,340 @@ aquí le estamos pasando la referencia de la función no la ejecución y ademas 
 </button>
 ```
 
-si lo entiendes así todo esta bien, no pasa nada. Las funciones son de primera clase eso quiere decir que la puedes pasar como parametro
+si lo entiendes así todo esta bien, no pasa nada. Las funciones son de primera clase eso quiere decir que la puedes pasar como parametro.
+
+## useReducer
+
+nos vamos a dar cuenta que tenemos muchos setCart, tenemos muchos seteos del estado, estan dentro de nuestra función, de nuestro provider, se hace difícil entender que lo que esta haciendo cada parte y esta mezclado tanto el return de lo que renderiza con la actualización del estado
+
+## ¿ Qué es el useReducer ?
+
+Es un hook que nos permite manejar el estado de una manera escalable, se basa en que recibe una función el estado actual y la acción que tiene que hacer, a partir del estado actual y la acción que tiene que hacer lo que hace es devolverte el nuevo estado, esto esta totalmente separado del componente del provider y del custom hook.
+
+- 1 Primero necesitamos el estado inicial
+
+el estado inicial puede ser un string, un número, un array, puede ser un objeto puede ser lo que tú queras, ahora necesitamos un reducer
+
+- 2 ahora necesitamos un reducer
+
+el reducer recibe el estado y la acción, se le llama reducer porque lo que hace es reducir. reducir -> trasnformar
+
+lo que esta haciendo es transformar este estado a partir de esta acción y calcular un nuevo estado, entonces esto tiene que devolver un estado, si es nuevo o viejo eso lo vamos a ver.
+
+Lo mas tipico es utlizar switch:
+
+el siwtich lo que dice según la acción que tengamos vamos hacer la una o la otra.
+
+```jsx
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TO_CART": {
+      const productInCartIndex = state.findIndex(
+        (item) => item.id === product.id
+      );
+    }
+  }
+};
+```
+
+de donde lo tenemos que buscar, fijate que ahora no viene de cart si no que viene del parametro y el initialState es donde tenemos todo el carro. Asi que en este state el carrito vamos a buscar si tenemos un item.
+
+vamos a sacar el type y el payload de action
+
+- en el type le pasaraimos el string para identificar cual es la acción que tiene que hacer
+- en el payload le vamos a pasar todo el objeto que necesitamos para actualizar el estado, puede que hay veces que sea opcional.
+
+Una vez que usamos el product cart en index, tenemos que hacer lo mismo que hemos hecho abajo, pero tenemos que cambiar este setCart.
+
+```jsx
+if (productInCartIndex >= 0) {
+  const newCart = structuredClone(cart);
+  newCart[productInCartIndex].quantity += 1;
+  return setCart(newCart);
+}
+```
+
+en lugar de llamar a un método, siempre tenemos que devolver un nuevo estado. Si queremos añadir un item en el carrito y este item ya estaba en carrito, en lugar de hacer un setCart, lo que podemos hacer es devolver el newCart, **en lugar de hacer un setCart lo que tenemos que hacer es un newCart**
+
+En el caso de que veamos que el producto no estaba en el carrito lo unico que tenemos que hacer es devolver el estado actual y añadir el actionPayload que sería el producto y la cantidad de 1
+
+en el caso del que el producto no este en el carrito lo que tenemos que hacer.
+
+ya tenemos los 2 ingredientes el estado inicial y los reducer
+
+```jsx
+import { createContext, useState } from "react";
+
+export const CartContext = createContext();
+
+const initialState = [];
+
+const reducer = (state, action) => {
+  const { type: actionType, payload: actionPayload } = action;
+
+  switch (actionType) {
+    case "ADD_TO_CART": {
+      const { id } = actionPayload;
+      const productInCartIndex = state.findIndex((item) => item.id === id);
+
+      if (productInCartIndex >= 0) {
+        const newState = structuredClone(state);
+        newState[productInCartIndex].quantity += 1;
+        return newState;
+      }
+
+      return [
+        ...state,
+        {
+          ...actionPayload, // product
+          qauntity: 1,
+        },
+      ];
+    }
+
+    case "REMOVE_FROM_CART": {
+      const { id } = actionPayload;
+      return state.filter((item) => item.id !== id);
+    }
+
+    case "CLEAR_CART": {
+      return initialState;
+    }
+  }
+};
+
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
+
+  useReducer(reducer, initialState);
+
+  return (
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+```
+
+Como utlizamos esto: lo que tenemos que usar dentro del CartProvider es el useReducer, al useReducer por un lado
+le tenemos que pasar el reducer que va recibir el estado y la acción para determinar el nuevo estado y como segundo parametro el initialState.
+
+Ahora vamos tener como primer parametro
+
+- 1 el state
+- 2 dispatch
+
+Este método dispatch es el que se va encargar de enviar ->
+las acciones al reducer, asi que vamos a tener el addToCart que le va llegar el producto.
+
+```jsx
+import { createContext, useReducer } from "react";
+
+export const CartContext = createContext();
+
+const initialState = [];
+
+const reducer = (state, action) => {
+  const { type: actionType, payload: actionPayload } = action;
+
+  switch (actionType) {
+    case "ADD_TO_CART": {
+      const { id } = actionPayload;
+      const productInCartIndex = state.findIndex((item) => item.id === id);
+
+      if (productInCartIndex >= 0) {
+        const newState = structuredClone(state);
+        newState[productInCartIndex].quantity += 1;
+        return newState;
+      }
+
+      return [
+        ...state,
+        {
+          ...actionPayload, // product
+          qauntity: 1,
+        },
+      ];
+    }
+
+    case "REMOVE_FROM_CART": {
+      const { id } = actionPayload;
+      return state.filter((item) => item.id !== id);
+    }
+
+    case "CLEAR_CART": {
+      return initialState;
+    }
+  }
+};
+
+export function CartProvider({ children }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const addToCart = (product) =>
+    dispacth({
+      type: "ADD_TO_CART",
+      payload: product,
+    });
+
+  const removeFromCart = (product) =>
+    dispacth({
+      type: "REMOVE_FROM_CART",
+      payload: product,
+    });
+
+  const clearCart = () => dispacth({ type: "CLEAN_CART" });
+
+  return (
+    <CartContext.Provider
+      value={{ cart: state, addToCart, removeFromCart, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+```
+
+vale la pena quitar el estado y utilizar useReducer, vale la pena por que hemos extraido la lógica de actualizar el estado, en una función totalmente separada, esto lo puedes utlizar incluso fuera de react
+
+```jsx
+const initialState = [];
+
+const reducer = (state, action) => {
+  const { type: actionType, payload: actionPayload } = action;
+
+  switch (actionType) {
+    case "ADD_TO_CART": {
+      const { id } = actionPayload;
+      const productInCartIndex = state.findIndex((item) => item.id === id);
+
+      if (productInCartIndex >= 0) {
+        const newState = structuredClone(state);
+        newState[productInCartIndex].quantity += 1;
+        return newState;
+      }
+
+      return [
+        ...state,
+        {
+          ...actionPayload, // product
+          qauntity: 1,
+        },
+      ];
+    }
+
+    case "REMOVE_FROM_CART": {
+      const { id } = actionPayload;
+      return state.filter((item) => item.id !== id);
+    }
+
+    case "CLEAR_CART": {
+      return initialState;
+    }
+  }
+};
+```
+
+el problema con useState es que la logica de actualización esta dentro del componente y te va costar mucho mas, para testear la primera lógica de actualización del estado tienes que renderizar el provider.
+
+Cuando tienes muchos state uno tras del otro debrías usar useReducer.
+
+si tienes muchos estados y useSatate eso es porque lo tienes fragmentado y a traves de acción,
+quieres actualizar parte de ese estado, por ejemplo cuando estas en un input y quieres saber.
+
+- El usuario ha escrito algo en el input.
+- cambias el input, un flag.
+
+en lugar de estar haciendolo con un estado fragmentado y tener que estar actualizando manualmente.
+
+Puedes tener un reducer que le acciones:
+
+- el usuario escribe y a partir de ahí dentro del reducer, cambiar el estado que tu necesites.
+
+```jsx
+const addToCart = (product) =>
+  dispacth({
+    type: "ADD_TO_CART",
+    payload: product,
+  });
+
+const removeFromCart = (product) =>
+  dispacth({
+    type: "REMOVE_FROM_CART",
+    payload: product,
+  });
+
+const clearCart = () => dispacth({ type: "CLEAN_CART" });
+```
+
+Estas funciones ya no necesitan estar aquí, pueden estar afuera también.
+
+## ¿ Por qué ?
+
+una vez que tengas el dispatch al final lo unico que necesitas es tener el dispatch.
+Podemos separarlo en un useReducerCart y ocuparlo donde queramos. Esto lo puedes
+hacer con un estado global o no
+
+```jsx
+import { createContext, useReducer } from "react";
+import { cartReducer, initialState } from "../reducers/cart";
+
+export const CartContext = createContext();
+
+function useCartReducer() {
+  const [state, dispacth] = useReducer(cartReducer, initialState);
+  const addToCart = (product) =>
+    dispacth({
+      type: "ADD_TO_CART",
+      payload: product,
+    });
+
+  const removeFromCart = (product) =>
+    dispacth({
+      type: "REMOVE_FROM_CART",
+      payload: product,
+    });
+
+  const clearCart = () => dispacth({ type: "CLEAN_CART" });
+  return { state, addToCart, removeFromCart, clearCart };
+}
+
+export function CartProvider({ children }) {
+  const { state, addToCart, removeFromCart, clearCart } = useCartReducer();
+
+  return (
+    <CartContext.Provider
+      value={{ cart: state, addToCart, removeFromCart, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+```
+
+Aqui simplemente lo estamos metiendo para que tenga estado global
+
+```jsx
+export function CartProvider({ children }) {
+  const { state, addToCart, removeFromCart, clearCart } = useCartReducer();
+
+  return (
+    <CartContext.Provider
+      value={{ cart: state, addToCart, removeFromCart, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+```
+
+Lo interezante es que este useReducer se puede ultizar con zustand, con redux lo que quieras,
+con esto podemos mover nuestro estado a otro producto.
+
+La dependencia de usar React Context es mínima.
+
+- escribimos lo mínimo necesario para tener el provider
+
+## Si implementas locaStorage ante de hacer cualquier return deberías actualizar con el nuevo state
