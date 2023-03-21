@@ -604,11 +604,11 @@ export default function Filters() {
 }
 ```
 
-la Logica la tenemos separada de los propios filters
+la Lógica la tenemos separada de los propios filters
 
 ## Error común en react
 
-2 fuentes de la verdad el price de la UI no es el mimos que tenemos en nuestro contexto por que esto es un estado local
+2 fuentes de la verdad el price de la UI no es el mismo que tenemos en nuestro contexto porque esto es un estado local
 
 ```jsx
 const [minPrice, setMinPrice] = useState(0); // esto es local
@@ -618,13 +618,13 @@ y tenemos el filtro del minPrice en el estado global, es como que tenemos el mis
 tienes que tener solo una fuente de la verdad. EL problema que al tener 2 fuentes de la verda no sabes por cual guiarte,
 Nuetra UI no es viable, entonces como evitamos este problema
 
-- nos vamos guiar de los filtros globales
+- nos vamos a guiar de los filtros globales
 
-ahora si lo tenemos totalmente sincronizado, solamente una fuente de la verdad
+ahora sí lo tenemos totalmente sincronizado, solamente una fuente de la verdad
 
 ## Vamos a crear el contexto del Carro de compra
 
-El carrito es importante que sea un estado global por que aparecera fijo en la parte superior, pero tambien los botones tendran que cambiar y actualizar el aside con el detalle del producto agregado al carrito.
+El carrito es importante que sea un estado global porque aparecerán fijo en la parte superior, pero también los botones tendrán que cambiar y actualizar el aside con el detalle del producto agregado al carrito.
 
 ## Cómo añadimos un producto al carrito de manera sencilla
 
@@ -644,9 +644,9 @@ Lo que podemos hacer en el caso que ya este.
 
 Vamos a buscar en el carrito el index de ese item donde el item.id sea igual al producto que estamos intentando añadir.
 
-vamos utlizar el structoreClone(cart) hace copia profunda de los arrays y de los objetos
+Vamos a utilizar el structoreClone(cart) hace copia profunda de los arrays y de los objetos
 
-por lo tanto aquí tienes un carrito nuevo
+por lo tanto, aquí tienes un carrito nuevo
 
 ```jsx
 //this is a form one way
@@ -660,11 +660,11 @@ if (productInCartIndex >= 0) {
 **Ya sabes que en el estado no puedes mutar el estado**
 
 lo que puedes hacer justamente es recuperar el index que tenemos de productInCartIndex e incrementar la cantidad, que este no es parte del state, la copia la estamos modificando.
-Este es un forma.
+Este es una forma.
 
 ¿por qué no usar spread operator? por que no es una copia profunda es una copia superficial.
 
-como el prodcuto no esta en el carrito lo inicializamos con la cantidad de 1
+como el producto no está en el carrito lo inicializamos con la cantidad de 1
 
 ```jsx
 setCart((prevState) => [
@@ -733,7 +733,7 @@ cuando tenemos la actualización del estado:
 setCart(cart.filter((item) => item.id !== product.id));
 ```
 
-esto aveces puede tener un array condition y accede exactamente al ultimo valor que puede tener el state, es mejor y buena práctica hacerlo con la función, **la función recibe como primer parametro justamente el valor anterior del estado y partir de ese valor duevlves el nuevo valor que tiene que tener ese estado**
+esto aveces puede tener un array condition y accede exactamente al ultimo valor que puede tener el state, es mejor y buena práctica hacerlo con la función, **la función recibe como primer parámetro justamente el valor anterior del estado y partir de ese valor devolvés el nuevo valor que tiene que tener ese estado**
 
 vamos a componente Cart
 
@@ -754,7 +754,7 @@ function CartItem({ thumnail, price, title, quantity, addToCart }) {
 }
 ```
 
-addToCart quiero que añada ese producto entonces se lo paso como una función que se va ejecutar cada vez que le den click, lo que estamos ahciend es crear una función que se la pasamos como props para añadir específicamente ese producto, no hace falta que el addToCart como global sin necesidad de del parámetro producto pase tambien a CartItem, quien añade
+addToCart quiero que añada ese producto entonces se lo paso como una función que se va ejecutar cada vez que le den click, lo que estamos haciendo es crear una función que se la pasamos como props para añadir específicamente ese producto, no hace falta que el addToCart como global sin necesidad de del parámetro producto pase también a CartItem, quien añade
 al carrito es el padre.
 
 ```jsx
@@ -763,7 +763,7 @@ al carrito es el padre.
 </button>
 ```
 
-aquí le estamos pasando la referencia de la función no la ejecución y ademas no recibe ningún paramentro, también puede ser una mala práctica si tiene un paramentro opcional, estas realmente contralando lo que se ejecuta en la función
+aquí le estamos pasando la referencia de la función no la ejecución y además no recibe ningún paramentro, también puede ser una mala práctica si tiene un parámetro opcional, estas realmente controlando lo que se ejecuta en la función
 
 ```jsx
 <button onClick={() => clearCart()}>
@@ -771,11 +771,11 @@ aquí le estamos pasando la referencia de la función no la ejecución y ademas 
 </button>
 ```
 
-si lo entiendes así todo esta bien, no pasa nada. Las funciones son de primera clase eso quiere decir que la puedes pasar como parametro.
+si lo entiendes así todo está bien, no pasa nada. Las funciones son de primera clase eso quiere decir que la puedes pasar como parámetro.
 
 ## useReducer
 
-nos vamos a dar cuenta que tenemos muchos setCart, tenemos muchos seteos del estado, estan dentro de nuestra función, de nuestro provider, se hace difícil entender que lo que esta haciendo cada parte y esta mezclado tanto el return de lo que renderiza con la actualización del estado
+nos vamos a dar cuenta que tenemos muchos setCart, tenemos muchos seteos del estado, estan dentro de nuestra función, de nuestro provider, se hace difícil entender que lo que esta haciendo cada parte y está mezclado tanto el return de lo que renderiza con la actualización del estado
 
 ## ¿ Qué es el useReducer ?
 
@@ -793,7 +793,7 @@ lo que esta haciendo es transformar este estado a partir de esta acción y calcu
 
 Lo mas tipico es utlizar switch:
 
-el siwtich lo que dice según la acción que tengamos vamos hacer la una o la otra.
+el siwtich lo que dice según la acción que tengamos vamos a hacer la una o la otra.
 
 ```jsx
 const reducer = (state, action) => {
@@ -807,9 +807,9 @@ const reducer = (state, action) => {
 };
 ```
 
-de donde lo tenemos que buscar, fijate que ahora no viene de cart si no que viene del parametro y el initialState es donde tenemos todo el carro. Asi que en este state el carrito vamos a buscar si tenemos un item.
+De donde lo tenemos que buscar, fijate que ahora no viene de cart si no que viene del parametro y el initialState es donde tenemos todo el carro. Así que en este state el carrito vamos a buscar si tenemos un item.
 
-vamos a sacar el type y el payload de action
+Vamos a sacar el type y el payload de action
 
 - en el type le pasaraimos el string para identificar cual es la acción que tiene que hacer
 - en el payload le vamos a pasar todo el objeto que necesitamos para actualizar el estado, puede que hay veces que sea opcional.
@@ -826,9 +826,9 @@ if (productInCartIndex >= 0) {
 
 en lugar de llamar a un método, siempre tenemos que devolver un nuevo estado. Si queremos añadir un item en el carrito y este item ya estaba en carrito, en lugar de hacer un setCart, lo que podemos hacer es devolver el newCart, **en lugar de hacer un setCart lo que tenemos que hacer es un newCart**
 
-En el caso de que veamos que el producto no estaba en el carrito lo unico que tenemos que hacer es devolver el estado actual y añadir el actionPayload que sería el producto y la cantidad de 1
+En el caso de que veamos que el producto no estaba en el carrito, lo único que tenemos que hacer es devolver el estado actual y añadir el actionPayload que sería el producto y la cantidad de 1
 
-en el caso del que el producto no este en el carrito lo que tenemos que hacer.
+en el caso del que el producto no esté en el carrito lo que tenemos que hacer.
 
 ya tenemos los 2 ingredientes el estado inicial y los reducer
 
@@ -888,16 +888,16 @@ export function CartProvider({ children }) {
 }
 ```
 
-Como utlizamos esto: lo que tenemos que usar dentro del CartProvider es el useReducer, al useReducer por un lado
-le tenemos que pasar el reducer que va recibir el estado y la acción para determinar el nuevo estado y como segundo parametro el initialState.
+Como utilizamos esto: lo que tenemos que usar dentro del CartProvider es el useReducer, al useReducer por un lado
+le tenemos que pasar el reducer que va recibir el estado y la acción para determinar el nuevo estado y como segundo parámetro el initialState.
 
-Ahora vamos tener como primer parametro
+Ahora vamos a tener como primer parámetro
 
 - 1 el state
 - 2 dispatch
 
 Este método dispatch es el que se va encargar de enviar ->
-las acciones al reducer, asi que vamos a tener el addToCart que le va llegar el producto.
+las acciones al reducer, así que vamos a tener el addToCart que le va a llegar el producto.
 
 ```jsx
 import { createContext, useReducer } from "react";
@@ -967,7 +967,7 @@ export function CartProvider({ children }) {
 }
 ```
 
-vale la pena quitar el estado y utilizar useReducer, vale la pena por que hemos extraido la lógica de actualizar el estado, en una función totalmente separada, esto lo puedes utlizar incluso fuera de react
+Vale la pena quitar el estado y utilizar useReducer, vale la pena porque hemos extraído la lógica de actualizar el estado, en una función totalmente separada, esto lo puedes utilizar incluso fuera de React
 
 ```jsx
 const initialState = [];
@@ -1007,21 +1007,21 @@ const reducer = (state, action) => {
 };
 ```
 
-el problema con useState es que la logica de actualización esta dentro del componente y te va costar mucho mas, para testear la primera lógica de actualización del estado tienes que renderizar el provider.
+el problema con useState es que la lógica de actualización está dentro del componente y te va a costar mucho más, para testear la primera lógica de actualización del estado tienes que renderizar el provider.
 
-Cuando tienes muchos state uno tras del otro debrías usar useReducer.
+Cuando tienes muchos state uno tras del otro deberías usar useReducer.
 
-si tienes muchos estados y useSatate eso es porque lo tienes fragmentado y a traves de acción,
-quieres actualizar parte de ese estado, por ejemplo cuando estas en un input y quieres saber.
+Si tienes muchos estados y useSatate eso es porque lo tienes fragmentado y a través de acción,
+quieres actualizar parte de ese estado, por ejemplo cuando estás en un input y quieres saber.
 
 - El usuario ha escrito algo en el input.
 - cambias el input, un flag.
 
-en lugar de estar haciendolo con un estado fragmentado y tener que estar actualizando manualmente.
+en lugar de estar haciéndolo con un estado fragmentado y tener que estar actualizando manualmente.
 
 Puedes tener un reducer que le acciones:
 
-- el usuario escribe y a partir de ahí dentro del reducer, cambiar el estado que tu necesites.
+- el usuario escribe y a partir de ahí, dentro del reducer, cambiar el estado que tú necesites.
 
 ```jsx
 const addToCart = (product) =>
@@ -1041,9 +1041,9 @@ const clearCart = () => dispacth({ type: "CLEAN_CART" });
 
 Estas funciones ya no necesitan estar aquí, pueden estar afuera también.
 
-## ¿ Por qué ?
+## ¿Por qué?
 
-una vez que tengas el dispatch al final lo unico que necesitas es tener el dispatch.
+Una vez que tengas el dispatch al final lo único que necesitas es tener el dispatch.
 Podemos separarlo en un useReducerCart y ocuparlo donde queramos. Esto lo puedes
 hacer con un estado global o no
 
@@ -1084,7 +1084,7 @@ export function CartProvider({ children }) {
 }
 ```
 
-Aqui simplemente lo estamos metiendo para que tenga estado global
+Aquí simplemente lo estamos metiendo para que tenga estado global
 
 ```jsx
 export function CartProvider({ children }) {
@@ -1100,7 +1100,7 @@ export function CartProvider({ children }) {
 }
 ```
 
-Lo interezante es que este useReducer se puede ultizar con zustand, con redux lo que quieras,
+Lo interesante es que este useReducer se puede ultilizar con zustand, con redux lo que quieras,
 con esto podemos mover nuestro estado a otro producto.
 
 La dependencia de usar React Context es mínima.
