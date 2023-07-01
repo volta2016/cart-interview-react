@@ -7,6 +7,19 @@
   top: 0px;
   width: 200px;
   z-index: 1;
+  animation: slideInCart 0.3s ease;
+}
+
+@keyframes slideInCart {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cart img {
@@ -52,8 +65,27 @@
 }
 
 
+
 /* when the button is check show to the cart - selector brother ~ */
 .cart-button~input:checked~.cart {
   height: 100%;
   display: block;
+}
+
+.cart-quantity {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+.wrap-totalprice {
+  display: flex;
+    align-items: center;
+    justify-content: space-around;
 }

@@ -4,6 +4,7 @@ export const cartInitialState =
 export const CART_ACTION_TYPES = {
   ADD_TO_CART: "ADD_TO_CART",
   REMOVE_FROM_CART: "REMOVE_FROM_CART",
+  REMOVE_ONE_FROM_CART: "REMOVE_ONE_FROM_CART",
   CLEAR_CART: "CLEAR_CART",
 };
 
@@ -58,6 +59,26 @@ const UPDATE_STATE_BY_ACTION = {
 
     updateLocalStorage(newState);
     return newState;
+  },
+  [CART_ACTION_TYPES.REMOVE_ONE_FROM_CART]: (state, action) => {
+    const { id } = action.payload;
+    const productInCartIndex = state.findIndex((item) => item.id === id);
+
+    if (productInCartIndex >= 0) {
+      const newState = [...state];
+      const product = newState[productInCartIndex];
+
+      if (product.quantity > 1) {
+        product.quantity -= 1;
+      } else {
+        newState.splice(productInCartIndex, 1);
+      }
+
+      updateLocalStorage(newState);
+      return newState;
+    }
+
+    return state;
   },
   [CART_ACTION_TYPES.REMOVE_FROM_CART]: (state, action) => {
     const { id } = action.payload;

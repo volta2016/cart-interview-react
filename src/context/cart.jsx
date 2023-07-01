@@ -11,6 +11,12 @@ function useCartReducer() {
       payload: product,
     });
 
+  const removeOneFromCart = (product) =>
+    dispacth({
+      type: "REMOVE_ONE_FROM_CART",
+      payload: product,
+    });
+
   const removeFromCart = (product) =>
     dispacth({
       type: "REMOVE_FROM_CART",
@@ -18,15 +24,22 @@ function useCartReducer() {
     });
 
   const clearCart = () => dispacth({ type: "CLEAR_CART" });
-  return { state, addToCart, removeFromCart, clearCart };
+  return { state, addToCart, removeFromCart, removeOneFromCart, clearCart };
 }
 
 export function CartProvider({ children }) {
-  const { state, addToCart, removeFromCart, clearCart } = useCartReducer();
+  const { state, addToCart, removeFromCart, removeOneFromCart, clearCart } =
+    useCartReducer();
 
   return (
     <CartContext.Provider
-      value={{ cart: state, addToCart, removeFromCart, clearCart }}
+      value={{
+        cart: state,
+        addToCart,
+        removeFromCart,
+        removeOneFromCart,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

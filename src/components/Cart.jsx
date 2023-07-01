@@ -3,7 +3,14 @@ import { CartIcon, ClearCartIcon } from "./Icons";
 import "../styles/Cart.css";
 import { useCart } from "../hooks/useCart";
 
-function CartItem({ thumbnail, price, title, quantity, addToCart }) {
+function CartItem({
+  thumbnail,
+  price,
+  title,
+  quantity,
+  addToCart,
+  removeOneFromCart,
+}) {
   return (
     <li>
       <img src={thumbnail} alt={title} />
@@ -14,6 +21,7 @@ function CartItem({ thumbnail, price, title, quantity, addToCart }) {
       <footer>
         <small>Qty: {quantity}</small>
         <button onClick={addToCart}>+</button>
+        <button onClick={removeOneFromCart}>-</button>
       </footer>
     </li>
   );
@@ -21,12 +29,23 @@ function CartItem({ thumbnail, price, title, quantity, addToCart }) {
 
 export function Cart() {
   const cartCheckboxId = useId();
-  const { cart, clearCart, addToCart } = useCart();
+  const { cart, clearCart, addToCart, removeOneFromCart } = useCart();
+
+  const totalQuantity = cart.reduce(
+    (total, product) => total + product.quantity,
+    0
+  );
+
+  const totalPrice = cart.reduce(
+    (total, product) => total + product.price * product.quantity,
+    0
+  );
 
   return (
     <>
       <label className="cart-button" htmlFor={cartCheckboxId}>
         <CartIcon />
+        <span className="cart-quantity">{totalQuantity}</span>
       </label>
       <input id={cartCheckboxId} type="checkbox" hidden />
 
@@ -36,14 +55,17 @@ export function Cart() {
             <CartItem
               key={product.id}
               addToCart={() => addToCart(product)}
+              removeOneFromCart={() => removeOneFromCart(product)}
               {...product}
             />
           ))}
         </ul>
-
-        <button onClick={clearCart}>
-          <ClearCartIcon />
-        </button>
+        <div className="wrap-totalprice">
+          <span>Total: ${totalPrice}</span>
+          <button onClick={clearCart}>
+            <ClearCartIcon />
+          </button>
+        </div>
       </aside>
     </>
   );
