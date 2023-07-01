@@ -21,4 +21,5 @@ Additional features:
 - ✅ Restar un producto desde el sidebar
 - ✅ total de precio de productos
 - ✅ Mostrar cantidad de producto cuando se añade uno al carrito
-- ✅ Resumen de buenas practicas
+- ✅ Apuntes de buenas prácticas
+- ✅ Responsive design con sintaxis de las Media Queries

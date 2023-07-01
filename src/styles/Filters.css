@@ -10,3 +10,10 @@
   display: flex;
   gap: 1rem;
 }
+
+@media (width < 500px) {
+  .filters {
+    flex-direction: column;
+    gap: 1.7rem;
+  }
+}
