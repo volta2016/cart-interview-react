@@ -1,13 +1,14 @@
 .cart {
   background: #000;
   display: none;
-  padding: 32px;
+  padding: 1rem 2rem;
   position: fixed;
   right: 0px;
   top: 0px;
   width: 200px;
   z-index: 1;
   animation: slideInCart 0.3s ease;
+  overflow-y: auto;
 }
 
 @keyframes slideInCart {
@@ -68,9 +69,10 @@
 
 /* when the button is check show to the cart - selector brother ~ */
 .cart-button~input:checked~.cart {
-  height: 100%;
+  height: 100vh;
   display: block;
 }
+
 
 .cart-quantity {
   position: absolute;
@@ -86,6 +88,30 @@
 
 .wrap-totalprice {
   display: flex;
-    align-items: center;
-    justify-content: space-around;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 2.5rem;
+}
+
+@media (width < 500px) {
+  #cart-overlay:target {
+      display: none;
+    }
+  
+  .cart-button~input:checked~#cart-overlay {
+    /* Estilos para mostrar el overlay cuando el checkbox está marcado */
+    display: block;
+  }
+
+  .overlay {
+    /* Estilos del overlay */
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(25 57 62 / 38%);
+    z-index: 0;
+  }
 }

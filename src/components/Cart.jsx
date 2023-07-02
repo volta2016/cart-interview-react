@@ -48,7 +48,7 @@ export function Cart() {
         <span className="cart-quantity">{totalQuantity}</span>
       </label>
       <input id={cartCheckboxId} type="checkbox" hidden />
-
+      <div className="overlay" id="cart-overlay"></div>
       <aside className="cart">
         <ul>
           {cart.map((product) => (

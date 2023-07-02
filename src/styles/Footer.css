@@ -21,3 +21,16 @@
   margin: 0;
   display: flex;
 }
+
+@media (width < 500px) {
+  .footer {
+    display: none;
+  }
+}
+
+@media (width > 767px) and (width <= 1024px) {
+  .footer {
+    width: 150px;
+  }
+}
+

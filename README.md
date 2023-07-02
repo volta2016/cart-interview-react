@@ -8,7 +8,7 @@ Ecommerce
 
 Haz uso de useContext para evitar pasar props innecesarias.
 
-Carrito:
+Requerimientos:
 
 - [x] Haz que se puedan añadir los productos a un carrito.
 - [x] Haz que se puedan eliminar los productos del carrito.
