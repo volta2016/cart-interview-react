@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { CartIcon, ClearCartIcon } from "./Icons";
-import "../styles/Cart.css";
 import { useCart } from "../hooks/useCart";
+import "../styles/Cart.css";
 
 function CartItem({
   thumbnail,

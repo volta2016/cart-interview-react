@@ -1,4 +1,4 @@
-.footer {
+.aside {
   position: fixed;
   left: 16px;
   bottom: 16px;
@@ -10,26 +10,26 @@
   backdrop-filter: blur(8px);
 }
 
-.footer span {
+.aside span {
   font-size: 14px;
   color: #09f;
   opacity: .8;
 }
 
-.footer h4,
-.footer h5 {
+.aside h4,
+.aside h5 {
   margin: 0;
   display: flex;
 }
 
 @media (width < 500px) {
-  .footer {
+  .aside {
     display: none;
   }
 }
 
 @media (width > 767px) and (width <= 1024px) {
-  .footer {
+  .aside {
     width: 150px;
   }
 }

@@ -1,8 +1,8 @@
 import { products as initialProducts } from "./mock/products.json";
-import React, { useState } from "react";
 import Products from "./components/Products";
 import "./styles/index.css";
 import Header from "./components/Header";
+import { AsideState } from "./components/AsideState";
 import { Footer } from "./components/Footer";
 import { useFilter } from "./hooks/useFilter";
 import { IS_DEVELOPMENT } from "./config";
@@ -18,7 +18,8 @@ function App() {
       <Header />
       <Cart />
       <Products products={filteredProducts} />
-      {IS_DEVELOPMENT && <Footer />}
+      <Footer />
+      {IS_DEVELOPMENT && <AsideState />}
     </CartProvider>
   );
 }
